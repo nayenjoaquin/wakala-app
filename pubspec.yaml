@@ -43,6 +43,7 @@ dependencies:
   shared_preferences: ^2.0.15
   intl: ^0.17.0
   gradient_borders: ^0.2.0
+  image_picker: ^0.8.6
 
 dev_dependencies:
   flutter_test:

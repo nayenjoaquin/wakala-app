@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:intl/intl.dart';
+import 'package:wakala/pages/new-post.dart';
 import 'package:wakala/services/wakalasService.dart';
 
 import '../models/wakala.dart';
@@ -41,7 +42,12 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const NewWakala()),
+          );
+        },
         backgroundColor: Colors.transparent,
         child: const Image(
           image: logo,
@@ -108,6 +114,8 @@ class _HomeState extends State<Home> {
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
                                 backgroundColor: Colors.transparent,
+                                minimumSize: Size.zero,
+                                padding: EdgeInsets.zero,
                               ),
                               child: Icon(
                                 Icons.chevron_right,
