@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:wakala/models/wakala.dart';
+import 'package:wakala/services/wakalasService.dart';
 
 import '../global.dart';
 import 'package:flutter/material.dart';
@@ -22,13 +25,40 @@ class _NewWakalaState extends State<NewWakala> {
   File? image1;
   File? image2;
 
+  Future<String> encode64(File image) async {
+    List<int> imageBytes = image.readAsBytesSync();
+    return base64Encode(imageBytes);
+  }
+
+  Future<void> postWakala() async {
+    String base64Foto1 = await encode64(image1!);
+    String base64Foto2 = await encode64(image2!);
+
+    var json = Wakala(
+            sector: sectorController.text,
+            image1: base64Foto1,
+            image2: base64Foto2,
+            autor: Global.login)
+        .toJson();
+    final response = await WakalasService().postWakalas(json);
+    if (response.statusCode == 200) {
+      Navigator.pop(context);
+      return;
+    } else {
+      print('error al publicar wakala: ');
+      print(response.statusCode);
+    }
+  }
+
   Future takePicture1() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.camera);
       if (image == null) return;
 
       final imageTemporary = File(image.path);
-      this.image1 = imageTemporary;
+      setState(() {
+        this.image1 = imageTemporary;
+      });
     } on PlatformException catch (e) {
       print('Error al cargar imagen');
     }
@@ -36,7 +66,9 @@ class _NewWakalaState extends State<NewWakala> {
 
   Future deletePicture1() async {
     if (this.image1 == null) return;
-    image1 = null;
+    setState(() {
+      image1 = null;
+    });
   }
 
   Future takePicture2() async {
@@ -45,7 +77,9 @@ class _NewWakalaState extends State<NewWakala> {
       if (image == null) return;
 
       final imageTemporary = File(image.path);
-      this.image2 = imageTemporary;
+      setState(() {
+        this.image2 = imageTemporary;
+      });
     } on PlatformException catch (e) {
       print('Error al cargar imagen');
     }
@@ -53,7 +87,9 @@ class _NewWakalaState extends State<NewWakala> {
 
   Future deletePicture2() async {
     if (this.image2 == null) return;
-    image1 = null;
+    setState(() {
+      image2 = null;
+    });
   }
 
   @override
@@ -64,9 +100,9 @@ class _NewWakalaState extends State<NewWakala> {
       appBar: AppBar(
         title: Row(
           children: [
-            Image(image: logo, height: 50),
+            Image(image: logo, height: 40),
             SizedBox(width: 20),
-            Text('Nuevo Wakala'),
+            Text('Nuevo Wuakala'),
           ],
         ),
         backgroundColor: Color.fromARGB(255, 16, 16, 16),
@@ -191,7 +227,7 @@ class _NewWakalaState extends State<NewWakala> {
                               child: image1 != null
                                   ? Image.file(
                                       image1!,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.contain,
                                     )
                                   : Icon(
                                       Icons.camera_alt,
@@ -290,7 +326,7 @@ class _NewWakalaState extends State<NewWakala> {
                               child: image2 != null
                                   ? Image.file(
                                       image2!,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.contain,
                                     )
                                   : Icon(
                                       Icons.camera_alt,
@@ -360,7 +396,28 @@ class _NewWakalaState extends State<NewWakala> {
                         borderRadius: BorderRadius.circular(12),
                         color: const Color.fromARGB(255, 16, 16, 16)),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        String msj = "";
+                        if (sectorController.text.isEmpty ||
+                            descController.text.isEmpty) {
+                          msj = "Debe rellenar todos los campos";
+                        } else if (image1 == null && image2 == null) {
+                          msj = "Debe enviar al menos 1 imagen";
+                        }
+
+                        if (msj.isNotEmpty) {
+                          final snackbar = SnackBar(
+                            content: Text(msj),
+                            backgroundColor: Colors.red,
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(snackbar);
+
+                          return;
+                        }
+
+                        postWakala();
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                       ),
@@ -368,7 +425,7 @@ class _NewWakalaState extends State<NewWakala> {
                         padding: EdgeInsets.all(20),
                         child: Center(
                           child: Text(
-                            'Publicar wakala',
+                            'Publicar wuakala',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -392,7 +449,9 @@ class _NewWakalaState extends State<NewWakala> {
                         borderRadius: BorderRadius.circular(12),
                         color: const Color.fromARGB(255, 48, 48, 48)),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color.fromARGB(255, 48, 48, 48),
                         shadowColor: Colors.transparent,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_borders/gradient_borders.dart';
@@ -28,11 +30,13 @@ class _LoginState extends State<Login> {
 
       await pref.setString('usuario', email);
 
-      Global.login = email;
+      Global.login = jsonDecode(response.body)['id'].toString();
+      print(Global.login);
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => const Home()));
     } else {
+      print('Error al acceder el login');
       final snackbar = SnackBar(
         content: const Text('Error al iniciar sesión, intente nuevamente'),
         backgroundColor: Colors.red,
@@ -96,7 +100,7 @@ class _LoginState extends State<Login> {
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    "Inicia sesión para descubrir wakalas cerca",
+                    "Inicia sesión para descubrir wuakalas cerca",
                     style: TextStyle(
                       fontSize: 16,
                       color: textColor,
@@ -239,11 +243,11 @@ class _LoginState extends State<Login> {
                   const SizedBox(height: 50),
 
                   Text(
-                    'Made by Joaquín Nayen',
+                    'by Joaquín Nayen & Diego Iturra',
                     style: TextStyle(
                       color: Colors.white30,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

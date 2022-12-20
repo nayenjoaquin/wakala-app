@@ -1,8 +1,11 @@
+// ignore_for_file: prefer_const_constructors, prefer_interpolation_to_compose_strings
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:intl/intl.dart';
 import 'package:wakala/pages/new-post.dart';
+import 'package:wakala/pages/wakala-page.dart';
 import 'package:wakala/services/wakalasService.dart';
 
 import '../models/wakala.dart';
@@ -66,7 +69,6 @@ class _HomeState extends State<Home> {
                   itemBuilder: (BuildContext context, int index) {
                     // WAKALAS CARDS
                     return Card(
-                      margin: EdgeInsets.symmetric(vertical: 10),
                       color: Color.fromARGB(255, 16, 16, 16),
                       elevation: 5,
                       shape: RoundedRectangleBorder(
@@ -74,56 +76,73 @@ class _HomeState extends State<Home> {
                         side:
                             BorderSide(color: Color.fromARGB(255, 48, 48, 48)),
                       ),
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        child: Row(
-                          children: [
-                            // Wakalas Info
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  // Ubicación
-                                  Text(
-                                    snapshot.data[index]['sector'],
-                                    style: TextStyle(
-                                      color: textColor,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  //Autor y fecha
-                                  Text(
-                                    "por @" +
-                                        snapshot.data[index]['autor'] +
-                                        " " +
-                                        snapshot.data[index]['fecha'],
-                                    style: TextStyle(
-                                      color: Colors.white54,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  WakalaScreen(id: snapshot.data[index]['id']),
                             ),
-
-                            SizedBox(width: 20),
-
-                            // Wakalas icon
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                backgroundColor: Colors.transparent,
-                                minimumSize: Size.zero,
-                                padding: EdgeInsets.zero,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                          child: Row(
+                            children: [
+                              // Wakalas Info
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    // Ubicación
+                                    Container(
+                                      width: double.infinity,
+                                      child: Text(
+                                        snapshot.data[index]['sector'],
+                                        style: TextStyle(
+                                          color: textColor,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    //Autor y fecha
+                                    Container(
+                                      width: double.infinity,
+                                      child: Text(
+                                        "por @" +
+                                            snapshot.data[index]['autor'] +
+                                            " " +
+                                            snapshot.data[index]['fecha'],
+                                        style: TextStyle(
+                                          color: Colors.white54,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              child: Icon(
+
+                              SizedBox(width: 20),
+
+                              // Wakalas icon
+                              Icon(
                                 Icons.chevron_right,
                                 size: 32,
                                 color: textColor,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );
